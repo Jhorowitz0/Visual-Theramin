@@ -16,20 +16,12 @@ public class TheraminDriver : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        float rot = FX.transform.eulerAngles.y;
-        rot += rotationRate;
-        // FX.transform.eulerAngles = new Vector3(0,rot,90);
-        Vector3 pos = driver1.localPosition;
-
-        FX.SetFloat("Driver 0",Vector3.Angle(transform.up,pos)/180f);
-        float azimuth = Mathf.Atan(Mathf.Sqrt((Mathf.Pow(pos.x,2) + Mathf.Pow(pos.y,2)))/pos.z)*Mathf.Rad2Deg;
-        if(azimuth < 0) azimuth += 180;
-        FX.SetFloat("Driver 1",azimuth/180);
-
-        pos = driver2.localPosition;
-        FX.SetFloat("Driver 2",Vector3.Angle(transform.up,pos)/180f);
-        azimuth = Mathf.Atan(Mathf.Sqrt((Mathf.Pow(pos.x,2) + Mathf.Pow(pos.y,2)))/pos.z)*Mathf.Rad2Deg;
-        if(azimuth < 0) azimuth += 180;
-        FX.SetFloat("Driver 3",azimuth/180);
+        Vector3 rotation = FX.transform.eulerAngles;
+        rotation.y += rotationRate;
+        FX.transform.eulerAngles = rotation;
+        FX.SetFloat("Driver 0",Input.GetAxis("LeftX")*0.5f+0.5f);
+        FX.SetFloat("Driver 1",Input.GetAxis("LeftY")*0.5f+0.5f);
+        FX.SetFloat("Driver 2",Input.GetAxis("RightX")*0.5f+0.5f);
+        FX.SetFloat("Driver 3",Input.GetAxis("RightY")*0.5f+0.5f);
     }
 }
