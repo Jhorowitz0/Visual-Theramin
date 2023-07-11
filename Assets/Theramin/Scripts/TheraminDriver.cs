@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.VFX;
+using Microsoft.MixedReality.Toolkit.Input;
 
 public class TheraminDriver : MonoBehaviour
 {
@@ -12,6 +13,7 @@ public class TheraminDriver : MonoBehaviour
     public float rotationRate;
 
     private void Start() {
+        Application.targetFrameRate = 60;
     }
     // Update is called once per frame
     void Update()
