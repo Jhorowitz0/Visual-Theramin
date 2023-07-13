@@ -2,12 +2,12 @@
 #pragma kernel CSMain
 
 
-RWStructuredBuffer<float3> colors;
+RWStructuredBuffer<float3> Colors;
+RWStructuredBuffer<float3> NewColors;
 float PalleteSize;
-// Create a RenderTexture with enableRandomWrite flag and set it
-// with cs.SetTexture
-RWTexture2D<float3> Result;
 
+RWTexture2D<float3> Input;
+RWTexture2D<float3> Output;
 float ResolutionX;
 float ResolutionY;
 
@@ -25,8 +25,8 @@ void CSMain (uint3 id : SV_DispatchThreadID)
     float closestDist = 1000;
     int closestColorIndex=0;
     for(int i = 0; i < PalleteSize; i++){
-        float3 c1 = colors[i];
-        float3 c2 = Result[id.xy];
+        float3 c1 = Colors[i];
+        float3 c2 = Input[id.xy];
 
         float rd = pow(c2[0]-c1[0],2);
         float gd = pow(c2[1]-c1[1],2);
@@ -40,7 +40,20 @@ void CSMain (uint3 id : SV_DispatchThreadID)
         }
     }
 
-    float v = closestColorIndex/PalleteSize;
+    float rOffset = Input[id.xy].x - closestColor.x;
+    float gOffset = Input[id.xy].y - closestColor.y;
+    float bOffset = Input[id.xy].z - closestColor.z;
 
-    Result[id.xy] = float3(v,v,v);
+    float3 color = NewColors[closestColorIndex];
+
+    color.x += rOffset;
+    color.y += gOffset;
+    color.z += bOffset;
+
+    // color[0] = color[0] + rOffset;
+    // color[1] = color[1] + gOffset;
+    // color[2] = color[2] + bOffset;
+
+    Output[id.xy] = color;
+    // Input[id.xy] = float3(closestColorIndex/PalleteSize,closestColorIndex/PalleteSize,closestColorIndex/PalleteSize);
 }
