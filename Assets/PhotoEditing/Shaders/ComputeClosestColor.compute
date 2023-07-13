@@ -1,0 +1,46 @@
+// Each #kernel tells which function to compile; you can have many kernels
+#pragma kernel CSMain
+
+
+RWStructuredBuffer<float3> colors;
+float PalleteSize;
+// Create a RenderTexture with enableRandomWrite flag and set it
+// with cs.SetTexture
+RWTexture2D<float3> Result;
+
+float ResolutionX;
+float ResolutionY;
+
+float rand(float2 co){
+    return(frac(sin(dot(co.xy, float2(12.9898,78.233))) * 43758.5453))*1;
+}
+
+[numthreads(8,8,1)]
+void CSMain (uint3 id : SV_DispatchThreadID)
+{
+    float x = id.x/ResolutionX;
+    float y = id.y/ResolutionY;
+
+    float3 closestColor = float3(0,0,0);
+    float closestDist = 1000;
+    int closestColorIndex=0;
+    for(int i = 0; i < PalleteSize; i++){
+        float3 c1 = colors[i];
+        float3 c2 = Result[id.xy];
+
+        float rd = pow(c2[0]-c1[0],2);
+        float gd = pow(c2[1]-c1[1],2);
+        float bd = pow(c2[2]-c1[2],2);
+
+        float dist = sqrt(rd+gd+bd);
+        if(dist < closestDist){
+            closestDist = dist;
+            closestColor = c1;
+            closestColorIndex = i;
+        }
+    }
+
+    float v = closestColorIndex/PalleteSize;
+
+    Result[id.xy] = float3(v,v,v);
+}
