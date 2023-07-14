@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.VFX;
 
 
 public class ColorPalletExtractor : MonoBehaviour
@@ -19,6 +20,10 @@ public class ColorPalletExtractor : MonoBehaviour
     private RenderTexture inputImage;
     public GameObject imagePlane;
     private Material _imgMat;
+
+    public VisualEffect pointCloud;
+
+    private ColorCloudManipulator manipulator;
     private Material imgMat{
         get{
             if(_imgMat == null) _imgMat = imagePlane.GetComponent<MeshRenderer>().material;
@@ -26,7 +31,7 @@ public class ColorPalletExtractor : MonoBehaviour
         }
     }
 
-    private Vector3[] colors;
+    public Vector3[] colors;
     void Start()
     {
         Vector3[] photo = getColorArray(img,100,100); //convert photo to array of colors
@@ -34,10 +39,14 @@ public class ColorPalletExtractor : MonoBehaviour
 
         InitializeEditor();
         imgMat.SetTexture("_img",outputImage);
+
+        manipulator = GetComponent<ColorCloudManipulator>();
+        manipulator.InitializeColorNodes(colors);
+        pointCloud.SetTexture("Source",outputImage);
     }
 
     private void Update() {
-        updateColors();
+        if(manipulator.isGrabbed)updateColors();
     }
 
     private void updateColors(){

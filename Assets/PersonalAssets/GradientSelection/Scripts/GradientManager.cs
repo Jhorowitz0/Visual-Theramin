@@ -23,8 +23,6 @@ public class GradientManager : MonoBehaviour
         }
     }
 
-    public Color c;
-
     // Update is called once per frame
     private void Start() {
         Curve.SetGradient("Grad",grad);
